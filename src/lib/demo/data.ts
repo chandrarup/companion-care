@@ -102,7 +102,7 @@ export type DemoLog = {
   mood: 1 | 2 | 3 | 4 | 5;
   sleep: "well" | "okay" | "poorly";
   notes: { en: string; es: string };
-  symptoms: { name: { en: string; es: string }; timeOfDay?: string; antecedent?: { en: string; es: string }; outcome?: { en: string; es: string } }[];
+  symptoms: { /** "other" = tracked but not a distress episode (e.g. appetite); "flag" = a safety red flag shown on the safety card. */ kind?: "other" | "flag"; name: { en: string; es: string }; timeOfDay?: string; antecedent?: { en: string; es: string }; outcome?: { en: string; es: string } }[];
 };
 
 function isoDaysAgo(n: number) {
@@ -114,47 +114,65 @@ function isoDaysAgo(n: number) {
 }
 
 export const DEMO_LOGS: DemoLog[] = [
+  // Synthetic data designed so every number quoted in the demo is true of it:
+  // 8 distress episodes in the last 8 days (5 agitation, 2 repetition, 1 sundowning), 7 of them 2:30-3:30 PM;
+  // music + dim light eased 6 of the 8, photos once; 3 poor nights (2 in the last week); mood averages 3.0; sleep 5 well / 4 okay / 3 poorly.
   {
     id: "l1", date: isoDaysAgo(0), mood: 3, sleep: "okay",
-    notes: { en: "Good morning. Bit restless after lunch.", es: "Buena mañana. Inquieta después del almuerzo." },
-    symptoms: [{ name: { en: "Agitation", es: "Agitación" }, timeOfDay: "afternoon", antecedent: { en: "After lunch", es: "Después del almuerzo" }, outcome: { en: "Music helped", es: "La música ayudó" } }],
+    notes: { en: "Good morning. Restless around 3pm.", es: "Buena mañana. Inquieta cerca de las 3pm." },
+    symptoms: [{ name: { en: "Agitation", es: "Agitación" }, timeOfDay: "afternoon", antecedent: { en: "Around 3pm", es: "Cerca de las 3pm" }, outcome: { en: "Music + dim light eased it", es: "La música y la luz tenue la calmaron" } }],
   },
   {
     id: "l2", date: isoDaysAgo(1), mood: 4, sleep: "well",
-    notes: { en: "Calm day. Sang along to Vicente.", es: "Día tranquilo. Cantó con Vicente." }, symptoms: [],
+    notes: { en: "Calm morning. Asked about the school near 3pm.", es: "Mañana tranquila. Preguntó por la escuela cerca de las 3pm." },
+    symptoms: [{ name: { en: "Repetition", es: "Repetición" }, timeOfDay: "afternoon", antecedent: { en: "Around 3pm", es: "Cerca de las 3pm" }, outcome: { en: "Music + dim light eased it", es: "La música y la luz tenue la calmaron" } }],
   },
   {
     id: "l3", date: isoDaysAgo(2), mood: 2, sleep: "poorly",
-    notes: { en: "Asked about going 'to the school' around 3pm.", es: "Preguntó por ir 'a la escuela' a las 3pm." },
-    symptoms: [{ name: { en: "Repetition", es: "Repetición" }, timeOfDay: "afternoon", antecedent: { en: "Around 3pm", es: "Cerca de las 3pm" }, outcome: { en: "Redirected with photos", es: "Redirigida con fotos" } }],
+    notes: { en: "Agitated at 3pm and paced the hallway.", es: "Agitada a las 3pm; caminó por el pasillo." },
+    symptoms: [{ name: { en: "Agitation", es: "Agitación" }, timeOfDay: "afternoon", antecedent: { en: "Around 3pm", es: "Cerca de las 3pm" }, outcome: { en: "Music + dim light eased it", es: "La música y la luz tenue la calmaron" } }],
   },
   {
-    id: "l4", date: isoDaysAgo(3), mood: 3, sleep: "okay", notes: { en: "Refused breakfast. Ate later.", es: "Rechazó el desayuno. Comió después." },
-    symptoms: [{ name: { en: "Appetite change", es: "Cambio de apetito" }, timeOfDay: "morning", outcome: { en: "Resolved by 10am", es: "Resuelto a las 10am" } }],
+    id: "l4", date: isoDaysAgo(3), mood: 3, sleep: "okay",
+    notes: { en: "Refused breakfast. Repeated questions about school at 3pm.", es: "Rechazó el desayuno. Preguntas repetidas sobre la escuela a las 3pm." },
+    symptoms: [
+      { kind: "other", name: { en: "Appetite change", es: "Cambio de apetito" }, timeOfDay: "morning", outcome: { en: "Resolved by 10am", es: "Resuelto a las 10am" } },
+      { name: { en: "Repetition", es: "Repetición" }, timeOfDay: "afternoon", antecedent: { en: "Around 3pm", es: "Cerca de las 3pm" }, outcome: { en: "Music + dim light eased it", es: "La música y la luz tenue la calmaron" } },
+    ],
   },
-  { id: "l5", date: isoDaysAgo(4), mood: 4, sleep: "well", notes: { en: "Lovely visit from María.", es: "Linda visita de María." }, symptoms: [] },
   {
-    id: "l6", date: isoDaysAgo(5), mood: 2, sleep: "poorly",
+    id: "l5", date: isoDaysAgo(4), mood: 2, sleep: "poorly",
+    notes: { en: "Agitated around 3pm. Family photos helped.", es: "Agitada cerca de las 3pm. Las fotos familiares ayudaron." },
+    symptoms: [{ name: { en: "Agitation", es: "Agitación" }, timeOfDay: "afternoon", antecedent: { en: "Around 3pm", es: "Cerca de las 3pm" }, outcome: { en: "Redirected with photos", es: "Redirigida con fotos" } }],
+  },
+  {
+    id: "l6", date: isoDaysAgo(5), mood: 2, sleep: "okay",
     notes: { en: "Agitated at sunset. Wanted to 'go home'.", es: "Agitada al atardecer. Quería 'ir a casa'." },
-    symptoms: [{ name: { en: "Sundowning", es: "Sundowning" }, timeOfDay: "evening", antecedent: { en: "Sunset", es: "Atardecer" }, outcome: { en: "Walk + warm light", es: "Caminata + luz cálida" } }],
+    symptoms: [{ name: { en: "Sundowning", es: "Sundowning" }, timeOfDay: "evening", antecedent: { en: "Sunset", es: "Atardecer" }, outcome: { en: "Music + dim light eased it", es: "La música y la luz tenue la calmaron" } }],
   },
-  { id: "l7", date: isoDaysAgo(6), mood: 3, sleep: "okay", notes: { en: "Quiet day. Garden time.", es: "Día tranquilo. Tiempo en el jardín." }, symptoms: [] },
   {
-    id: "l8", date: isoDaysAgo(8), mood: 2, sleep: "poorly",
-    notes: { en: "Restless. Repeated questions about school.", es: "Inquieta. Preguntas repetidas sobre la escuela." },
-    symptoms: [{ name: { en: "Repetition", es: "Repetición" }, timeOfDay: "afternoon", outcome: { en: "Music eased it", es: "La música la calmó" } }],
+    id: "l7", date: isoDaysAgo(6), mood: 3, sleep: "okay",
+    notes: { en: "Restless at 3pm. Music and softer lights helped.", es: "Inquieta a las 3pm. La música y luces más suaves ayudaron." },
+    symptoms: [{ name: { en: "Agitation", es: "Agitación" }, timeOfDay: "afternoon", antecedent: { en: "Around 3pm", es: "Cerca de las 3pm" }, outcome: { en: "Music + dim light eased it", es: "La música y la luz tenue la calmaron" } }],
   },
-  { id: "l9", date: isoDaysAgo(10), mood: 4, sleep: "well", notes: { en: "Sang all afternoon.", es: "Cantó toda la tarde." }, symptoms: [] },
   {
-    id: "l10", date: isoDaysAgo(12), mood: 3, sleep: "okay",
+    id: "l8", date: isoDaysAgo(7), mood: 3, sleep: "well",
+    notes: { en: "Restless at 3pm. Settled by evening.", es: "Inquieta a las 3pm. Se calmó por la noche." },
+    symptoms: [{ name: { en: "Agitation", es: "Agitación" }, timeOfDay: "afternoon", antecedent: { en: "Around 3pm", es: "Cerca de las 3pm" } }],
+  },
+  { id: "l9", date: isoDaysAgo(8), mood: 3, sleep: "poorly", notes: { en: "Quiet day. Restless night.", es: "Día tranquilo. Noche inquieta." }, symptoms: [] },
+  { id: "l10", date: isoDaysAgo(9), mood: 5, sleep: "well", notes: { en: "Lovely visit from María. Sang along to Vicente.", es: "Linda visita de María. Cantó con Vicente." }, symptoms: [] },
+  { id: "l11", date: isoDaysAgo(10), mood: 4, sleep: "well", notes: { en: "Sang all afternoon.", es: "Cantó toda la tarde." }, symptoms: [] },
+  {
+    id: "l12", date: isoDaysAgo(11), mood: 2, sleep: "well",
     notes: {
       en: "Confused most of the day. Didn't recognize María when she visited. Saw 'people in the garden' that weren't there.",
       es: "Confundida casi todo el día. No reconoció a María cuando vino. Vio 'gente en el jardín' que no estaba.",
     },
     symptoms: [
-      { name: { en: "Prolonged confusion", es: "Confusión prolongada" }, timeOfDay: "evening" },
-      { name: { en: "Did not recognize caregiver", es: "No reconoció a la cuidadora" }, timeOfDay: "afternoon" },
-      { name: { en: "Hallucinations", es: "Alucinaciones" }, timeOfDay: "afternoon" },
+      { kind: "flag", name: { en: "Prolonged confusion", es: "Confusión prolongada" }, timeOfDay: "evening" },
+      { kind: "flag", name: { en: "Did not recognize caregiver", es: "No reconoció a la cuidadora" }, timeOfDay: "afternoon" },
+      { kind: "flag", name: { en: "Hallucinations", es: "Alucinaciones" }, timeOfDay: "afternoon" },
     ],
   },
 ];
@@ -207,8 +225,8 @@ const RULES: AskRule[] = [
     response: {
       kind: "personalized",
       text: {
-        en: "Music + dim lights at 2:45 PM has eased or resolved 6 of 8 logged distress moments. Morning walks are tied to her best-sleep nights (4/5 days). Redirecting with familiar photos worked the one time it was tried.",
-        es: "Música + luces tenues a las 2:45 PM ha aliviado o resuelto 6 de 8 momentos de angustia registrados. Las caminatas matutinas se asocian con sus mejores noches de sueño (4/5 días). Redirigir con fotos familiares funcionó la única vez que se intentó.",
+        en: "Music + dim lights at 2:45 PM has eased or resolved 6 of 8 logged distress moments. Redirecting with familiar photos worked the one time it was tried.",
+        es: "Música + luces tenues a las 2:45 PM ha aliviado o resuelto 6 de 8 momentos de angustia registrados. Redirigir con fotos familiares funcionó la única vez que se intentó.",
       },
     },
   },
@@ -571,8 +589,8 @@ export const DEMO_INSIGHTS = [
     id: "insight-3pm",
     title: { en: "Afternoon agitation linked to 3 PM", es: "Agitación de la tarde ligada a las 3 PM" },
     body: {
-      en: "5 of the last 8 agitation episodes started between 2:30–3:30 PM. Rosa left her classroom at 3:00 PM for 31 years.",
-      es: "5 de los últimos 8 episodios de agitación empezaron entre 2:30 y 3:30 PM. Rosa salía de su salón a las 3 PM por 31 años.",
+      en: "5 of the last 8 episodes were afternoon agitation starting between 2:30–3:30 PM, and 2 more were repeated questions about school in the same window. Rosa left her classroom at 3:00 PM for 31 years.",
+      es: "5 de los últimos 8 episodios fueron agitación por la tarde entre las 2:30 y las 3:30 PM, y 2 más fueron preguntas repetidas sobre la escuela en la misma franja. Rosa salía de su salón a las 3 PM por 31 años.",
     },
     suggestion: {
       en: "Try a 'gentle hand-off': Vicente Fernández at 2:45 PM and dim lights.",

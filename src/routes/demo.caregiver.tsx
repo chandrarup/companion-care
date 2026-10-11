@@ -456,8 +456,10 @@ function SummaryTab({ L, setPreview }: { L: "en" | "es"; setPreview: (f: ComingS
   }));
 
   // Episodes by time of day
+  // Difficult episodes exclude tracked-but-not-distress items (appetite) and the safety red flags (shown on the safety card).
+  const isEpisode = (s: { kind?: string }) => !s.kind;
   const tod: Record<string, number> = { morning: 0, afternoon: 0, evening: 0, night: 0 };
-  for (const l of DEMO_LOGS) for (const s of l.symptoms) {
+  for (const l of DEMO_LOGS) for (const s of l.symptoms.filter(isEpisode)) {
     const k = s.timeOfDay && tod[s.timeOfDay] !== undefined ? s.timeOfDay : "morning";
     tod[k] += 1;
   }
@@ -477,22 +479,19 @@ function SummaryTab({ L, setPreview }: { L: "en" | "es"; setPreview: (f: ComingS
 
   // Symptom counts
   const symCounts: Record<string, number> = {};
-  for (const l of DEMO_LOGS) for (const s of l.symptoms) {
+  for (const l of DEMO_LOGS) for (const s of l.symptoms.filter((x) => x.kind !== "flag")) {
     const n = s.name[L]; symCounts[n] = (symCounts[n] || 0) + 1;
   }
   const symptomData = Object.entries(symCounts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
 
   const avgMood = (DEMO_LOGS.reduce((n, l) => n + l.mood, 0) / DEMO_LOGS.length).toFixed(1);
-  const totalEpisodes = DEMO_LOGS.reduce((n, l) => n + l.symptoms.length, 0);
+  const totalEpisodes = DEMO_LOGS.reduce((n, l) => n + l.symptoms.filter(isEpisode).length, 0);
   const poorSleepNights = sleepCounts.poorly || 0;
 
   // Plain-language summary inputs (observations only, derived from logged data)
   const dayCount = 12;
   const afternoonEpisodes = tod.afternoon || 0;
-  const easedCount = DEMO_LOGS.reduce((n, l) => n + l.symptoms.filter((s) => {
-    const o = (s.outcome?.en || "").toLowerCase();
-    return o.includes("music") || o.includes("dim") || o.includes("eased") || o.includes("helped") || o.includes("redirected") || o.includes("warm light");
-  }).length, 0);
+  const easedCount = DEMO_LOGS.reduce((n, l) => n + l.symptoms.filter(isEpisode).filter((s) => (s.outcome?.en || "").toLowerCase().includes("music")).length, 0);
   const easedDen = totalEpisodes;
   const summaryEn = `Over the last ${dayCount} days, Rosa logged ${totalEpisodes} difficult ${totalEpisodes === 1 ? "episode" : "episodes"}. Most happened in the afternoon, between 2:30 and 3:30 PM, which lines up with her old 3 PM routine of leaving school. Music and dim light eased the episode ${easedCount} out of ${easedDen} times. She slept poorly on ${poorSleepNights} ${poorSleepNights === 1 ? "night" : "nights"} and her overall mood averaged ${avgMood} out of 5. No falls and no medication changes during this period.`;
   const summaryEs = `En los últimos ${dayCount} días, Rosa registró ${totalEpisodes} ${totalEpisodes === 1 ? "episodio difícil" : "episodios difíciles"}. La mayoría ocurrió por la tarde, entre las 2:30 y las 3:30 PM, lo que coincide con su antigua rutina de salir de la escuela a las 3 PM. La música y la luz tenue aliviaron el episodio ${easedCount} de ${easedDen} veces. Durmió mal ${poorSleepNights} ${poorSleepNights === 1 ? "noche" : "noches"} y su ánimo general promedió ${avgMood} de 5. Sin caídas y sin cambios de medicación en este periodo.`;
