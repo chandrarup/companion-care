@@ -11,5 +11,6 @@ cd "$(dirname "$0")/.."
 npm run build
 $SSH "$HOST" "mkdir -p /opt/companion-care/releases/$REL"
 rsync -az --delete -e "$SSH" .output "$HOST:/opt/companion-care/releases/$REL/"
+scp -q -i "$KEY" scripts/cleanup-demo-voices.mjs "$HOST:/opt/companion-care/tools/cleanup-demo-voices.mjs"
 $SSH "$HOST" "chown -R companion:companion /opt/companion-care/releases/$REL && ln -sfn /opt/companion-care/releases/$REL /opt/companion-care/current && systemctl restart companion-care && ls -1dt /opt/companion-care/releases/* | tail -n +4 | xargs -r rm -rf"
 echo "deployed $REL to $HOST"

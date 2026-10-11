@@ -48,6 +48,14 @@ ufw allow 80/tcp
 ufw allow 443/tcp
 ufw --force enable
 
+# Hourly-ish cleanup of cloned demo voices (biometric data) after 3 hours
+mkdir -p /opt/companion-care/tools
+(cd /opt/companion-care/tools && [ -d node_modules/pg ] || (npm init -y >/dev/null && npm install --silent pg))
+cat > /etc/cron.d/companion-demo-voices <<'CRON'
+*/15 * * * * root cd /opt/companion-care/tools && /usr/bin/node --env-file=/etc/companion-care.env cleanup-demo-voices.mjs >> /var/log/demo-voice-cleanup.log 2>&1
+CRON
+chmod 644 /etc/cron.d/companion-demo-voices
+
 cp /root/companion-care.service /etc/systemd/system/companion-care.service
 systemctl daemon-reload
 systemctl enable companion-care
