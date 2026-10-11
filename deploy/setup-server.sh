@@ -41,6 +41,15 @@ CADDY
 systemctl enable --now caddy
 systemctl reload caddy || systemctl restart caddy
 
+# SSH: keys only, no password guessing
+cat > /etc/ssh/sshd_config.d/00-hardening.conf <<SSHD
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin prohibit-password
+MaxAuthTries 3
+SSHD
+sshd -t && systemctl reload ssh
+
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow 22/tcp
