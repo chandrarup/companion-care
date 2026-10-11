@@ -1,0 +1,333 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import "@fontsource/atkinson-hyperlegible-next/400.css";
+@import "@fontsource/atkinson-hyperlegible-next/500.css";
+@import "@fontsource/atkinson-hyperlegible-next/600.css";
+@import "@fontsource/atkinson-hyperlegible-next/700.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/*
+ * Companion Care — one colour, neutral and minimal.
+ * A warm near-white base, warm charcoal text, and a single terracotta used only for
+ * the main button, the active nav / tab, and focus. Everything else is neutral.
+ * Contrast (day): text 16.4:1, muted text 7.0:1, white on terracotta 5.5:1, terracotta on base 5.3:1.
+ * Evening (data-time="night"): warm dark brown, terracotta lightened to 8:1, dark text on it.
+ */
+:root {
+  --radius: 1rem;
+
+  --background: #FCFAF7;
+  --foreground: #1F1B18;
+  --card: #FFFFFF;
+  --card-foreground: #1F1B18;
+  --popover: #FFFFFF;
+  --popover-foreground: #1F1B18;
+  --primary: #AE4A2A;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F4EFE9;
+  --secondary-foreground: #1F1B18;
+  --muted: #F4EFE9;
+  --muted-foreground: #5E554E;
+  --accent: #AE4A2A;
+  --accent-foreground: #FFFFFF;
+  --destructive: #B3261E;
+  --destructive-foreground: #FFFFFF;
+  --border: #E6DED5;
+  --input: #CFC4B9;
+  --ring: #AE4A2A;
+  /* Charts: terracotta first, then neutrals. */
+  --chart-1: #AE4A2A;
+  --chart-2: #6F645B;
+  --chart-3: #A39689;
+  --chart-4: #CFC4B9;
+  --chart-5: #E6B29F;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #1F1B18;
+  --sidebar-primary: #AE4A2A;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F4EFE9;
+  --sidebar-accent-foreground: #1F1B18;
+  --sidebar-border: #E6DED5;
+  --sidebar-ring: #AE4A2A;
+
+  /* Semantic, text-always-included states. Muted so only --destructive reads as danger. */
+  --tint: #F6E7E0;          /* pale terracotta tint: tags, selected rows */
+  --tint-foreground: #7A3219;
+
+  /* Typography and touch sizing */
+  --text-caregiver-min: 16pt;
+  --text-patient-min: clamp(20pt, 3.4vw + 10pt, 34pt);
+  --touch-patient-min: clamp(88px, 10vw, 140px);
+  --touch-caregiver-min: 44px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* Evening: AppShell sets data-time="night" from 7 PM. Same layout, warm dark tokens. */
+[data-time="night"] {
+  --background: #1B1714;
+  --foreground: #F6EFE8;
+  --card: #26211D;
+  --card-foreground: #F6EFE8;
+  --popover: #26211D;
+  --popover-foreground: #F6EFE8;
+  --primary: #EE9A78;
+  --primary-foreground: #1B1714;
+  --secondary: #302A25;
+  --secondary-foreground: #F6EFE8;
+  --muted: #302A25;
+  --muted-foreground: #C9BDB2;
+  --accent: #EE9A78;
+  --accent-foreground: #1B1714;
+  --destructive: #FF9A8C;
+  --destructive-foreground: #1B1714;
+  --border: #433B34;
+  --input: #5A5048;
+  --ring: #EE9A78;
+  --sidebar: #26211D;
+  --sidebar-foreground: #F6EFE8;
+  --sidebar-primary: #EE9A78;
+  --sidebar-primary-foreground: #1B1714;
+  --sidebar-accent: #302A25;
+  --sidebar-accent-foreground: #F6EFE8;
+  --sidebar-border: #433B34;
+  --sidebar-ring: #EE9A78;
+  --tint: #3A2E27;
+  --tint-foreground: #F3C5B1;
+  --chart-1: #EE9A78;
+  --chart-2: #B3A79B;
+  --chart-3: #8A7E73;
+  --chart-4: #5A5048;
+  --chart-5: #B87C64;
+  color-scheme: dark;
+}
+
+[data-time="night"] body, body[data-time="night"] { background-color: var(--background); }
+
+@theme inline {
+  --color-tint: var(--tint);
+  --color-tint-foreground: var(--tint-foreground);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-size: var(--text-caregiver-min);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  html, body { overflow-x: hidden; }
+  img, svg, video, canvas { max-width: 100%; height: auto; }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+  }
+  button, .btn, [role="button"] { font-weight: 600; }
+
+  .photo-crossfade { transition: opacity 4000ms ease-in-out; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Patient-mode scope: enforce minimum text size and touch targets. */
+  [data-mode="patient"] { font-size: var(--text-patient-min); }
+  [data-mode="patient"] button,
+  [data-mode="patient"] a[role="button"],
+  [data-mode="patient"] [data-touch] {
+    min-height: var(--touch-patient-min);
+    min-width: var(--touch-patient-min);
+    font-size: var(--text-patient-min);
+  }
+
+  /* Dialogs inside patient mode keep normal button sizes. */
+  [data-mode="patient"] [data-compact] button,
+  [data-mode="patient"] [data-compact] [data-touch] {
+    min-height: 52px;
+    min-width: 0;
+    font-size: 1.125rem;
+  }
+
+  /* Visible focus everywhere. */
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+/* Caregiver and clinical surfaces are plain: the base colour, no wash, glass or shadow. */
+[data-surface="caregiver"] { min-height: 100dvh; background: var(--background); color: var(--foreground); }
+[data-surface="clinical"] { background: var(--background); color: var(--foreground); }
+
+/* Plain card: used where a bordered surface is wanted outside the Card component. */
+.glass-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  color: var(--card-foreground);
+}
+
+.metric-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.metric-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--foreground);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Print: keep only the physician summary card on the page. */
+@media print {
+  body, [data-surface="clinical"] { background: white !important; color: black !important; }
+  header, nav, [role="banner"], .print\:hidden { display: none !important; }
+  main { max-width: none !important; padding: 0 !important; }
+  article { break-inside: avoid; }
+}
+
+/* Patient mode: photo-led. The photo, a soft scrim and white text stay; controls are plain. */
+.patient-photo-bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+@media (min-width: 640px) { .patient-photo-bg { background-position: center; } }
+.patient-scrim {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20,16,13,0.82) 0%, rgba(20,16,13,0.35) 40%, rgba(20,16,13,0) 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+.patient-greeting { color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.45); font-weight: 700; letter-spacing: -0.01em; }
+.patient-caption { color: #FFFFFF; text-shadow: 0 1px 8px rgba(0,0,0,0.5); font-weight: 400; }
+
+/* Patient button: a plain surface with a clear outline. No shadow, no gloss. */
+.btn-neo-cream {
+  background: var(--card);
+  color: var(--foreground);
+  border-radius: 24px;
+  min-height: clamp(72px, 12vw, 120px);
+  padding: clamp(0.75rem, 2vw, 1.25rem) clamp(1rem, 3vw, 1.75rem);
+  font-size: clamp(16pt, 2.2vw, 24pt);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 2px solid var(--foreground);
+}
+.btn-neo-cream .icon { color: var(--primary); }
+
+/* Native controls (checkbox, radio, range) follow the single accent. */
+input, select, textarea, progress { accent-color: var(--primary); }
+
+/* Form fields: plain surface, dark text, clear border. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
+textarea,
+select {
+  background-color: var(--card);
+  color: var(--foreground);
+  caret-color: var(--foreground);
+}
+input::placeholder,
+textarea::placeholder { color: var(--muted-foreground); opacity: 1; }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0 1000px var(--card) inset;
+  caret-color: var(--foreground);
+}
+
+/* Ask Companion floating action button: keep it clear of the bottom action tiles on mobile. */
+.ask-fab { bottom: calc(env(safe-area-inset-bottom, 0px) + 15rem); }
+@media (min-width: 768px) { .ask-fab { bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem); } }

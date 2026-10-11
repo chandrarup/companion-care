@@ -1,0 +1,1 @@
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS intended_role text CHECK (intended_role IN ('caregiver','patient'));

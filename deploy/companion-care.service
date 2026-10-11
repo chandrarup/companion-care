@@ -1,0 +1,22 @@
+[Unit]
+Description=Companion Care (TanStack Start, Node)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=companion
+Group=companion
+WorkingDirectory=/opt/companion-care/current
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3000
+EnvironmentFile=/etc/companion-care.env
+ExecStart=/usr/bin/node .output/server/index.mjs
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
